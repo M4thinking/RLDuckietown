@@ -11,20 +11,13 @@ import gym_duckietown
 from gym_duckietown.envs import DuckietownEnv
 import numpy as np
 import cv2
+import os
 
 #La red/Rl            
 import matplotlib.pyplot as plt      # MATLAB like plotting routines
 import random                        # for generating random numbers
 
-#from keras.datasets import mnist     # MNIST dataset is included in Keras
-#from keras.models import Sequential  # Model type to be used
-
-#from keras.layers.core import Dense, Dropout, Activation # Types of layers to be used in our model
-#from keras.utils import np_utils                         # NumPy related tools	
-
 #Definimos nuestos envirioment
-
-        
 
 def mov_duckiebot(key):
     # La acción de Duckiebot consiste en dos valores:
@@ -73,6 +66,8 @@ if __name__ == '__main__':
 
 
     i = 0
+    # Se abre archivo de texto para guardar velocidades
+    archivo = open("vel.txt", 'w')
     while True:
 
         # Captura la tecla que está siendo apretada y almacena su valor en key
@@ -85,13 +80,25 @@ if __name__ == '__main__':
         # Se ejecuta la acción definida anteriormente y se retorna la observación (obs),
         # la evaluación (reward), etc
         obs, reward, done, info = env.step(action)
+        # Se guarda vector de velocidades 
+        archivo.write(str(action[0])+","+str(action[1]) +'\n') 
+
         # obs consiste en un imagen RGB de 640 x 480 x 3
+        print(str(key))
+        i+=1
+        path = 'C:/Users/HP/Desktop/RLDuckietown/RL/imgSimulator'
+        cv2.imwrite(os.path.join('img' + str(i) + '.jpg'), cv2.cvtColor(obs, cv2.COLOR_RGB2BGR))
         # done significa que el Duckiebot chocó con un objeto o se salió del camino
         if done:
             print('done!')
-            i+=1
+            
             # En ese caso se reinicia el simulador
             env.reset()
-            cv2.imwrite('img' + str(i) + '.jpg', cv2.cvtColor(obs, cv2.COLOR_RGB2BGR))
+ 
+        # Se muestra en una ventana llamada "patos" la observación del simulador
+        cv2.imshow("patos", cv2.cvtColor(obs, cv2.COLOR_RGB2BGR))
 
+    archivo.close()
 
+# Se cierra el environment y termina el programa
+env.close()
