@@ -82,7 +82,7 @@ if __name__ == '__main__':
         obs, reward, done, info = env.step(action)
         archivo.write(str(action[0])+","+str(action[1]) +'\n')
         # obs consiste en un imagen RGB de 640 x 480 x 3
-        path = 'C:/Users/HP/Desktop/RLDuckietown/RL/frames'
+        path = 'C:/Users/Max/Desktop/RLDuckietown/RL/frames'
         cv2.imwrite(os.path.join(path,"img{}.jpg".format(i)), cv2.cvtColor(obs, cv2.COLOR_RGB2BGR))
         i+=1
         # done significa que el Duckiebot chocó con un objeto o se salió del camino
