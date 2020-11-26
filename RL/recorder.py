@@ -15,6 +15,7 @@ import os
 
 #La red/Rl            
 import matplotlib.pyplot as plt      # MATLAB like plotting routines
+import matplotlib.image as img
 import random                        # for generating random numbers
 
 #Definimos nuestos envirioment
@@ -66,7 +67,6 @@ if __name__ == '__main__':
 
 
     i = 0
-    # Se abre archivo de texto para guardar velocidades
     archivo = open("vel.txt", 'w')
     while True:
 
@@ -80,14 +80,11 @@ if __name__ == '__main__':
         # Se ejecuta la acción definida anteriormente y se retorna la observación (obs),
         # la evaluación (reward), etc
         obs, reward, done, info = env.step(action)
-        # Se guarda vector de velocidades 
-        archivo.write(str(action[0])+","+str(action[1]) +'\n') 
-
+        archivo.write(str(action[0])+","+str(action[1]) +'\n')
         # obs consiste en un imagen RGB de 640 x 480 x 3
-        print(str(key))
+        path = 'C:/Users/HP/Desktop/RLDuckietown/RL/frames'
+        cv2.imwrite(os.path.join(path,"img{}.jpg".format(i)), cv2.cvtColor(obs, cv2.COLOR_RGB2BGR))
         i+=1
-        path = 'C:/Users/HP/Desktop/RLDuckietown/RL/imgSimulator'
-        cv2.imwrite(os.path.join('img' + str(i) + '.jpg'), cv2.cvtColor(obs, cv2.COLOR_RGB2BGR))
         # done significa que el Duckiebot chocó con un objeto o se salió del camino
         if done:
             print('done!')
@@ -97,8 +94,6 @@ if __name__ == '__main__':
  
         # Se muestra en una ventana llamada "patos" la observación del simulador
         cv2.imshow("patos", cv2.cvtColor(obs, cv2.COLOR_RGB2BGR))
-
     archivo.close()
-
 # Se cierra el environment y termina el programa
 env.close()
