@@ -1,6 +1,6 @@
 #!/usr/bin/env pyth
 """
-Este programa permite mover
+Red neuronal
 .
 """
 #Arquitecctura de la red
@@ -41,8 +41,8 @@ Y_test = rd.Y[corto:]
 #X_train = X_train.astype('float32')         # change integers to 32-bit floating point numbers
 #X_test = X_test.astype('float32')
 
-#X_train /= 255                              # normalize each value for each pixel for the entire vector for each input
-#X_test /= 255
+X_train = X_train/255                              # normalize each value for each pixel for the entire vector for each input
+X_test = X_test/255
 
 #print("Training matrix shape", X_train.shape)
 #print("Testing matrix shape", X_test.shape)
@@ -58,9 +58,9 @@ Y_test = np_utils.to_categorical(Y_test, nb_classes)
 model = Sequential()                                 # Linear stacking of layers
 
 # Convolution Layer 1
-model.add(Conv2D(32, (3, 3), input_shape=(640,480,3))) # 32 different 3x3 kernels -- so 32 feature maps
-model.add(BatchNormalization(axis=-1))               # normalize each feature map before activation
-convLayer01 = Activation('relu')                     # activation
+model.add(Conv2D(32, (3, 3), input_shape=(120,160,3))) # 32 different 3x3 kernels -- so 32 feature maps
+model.add(BatchNormalization(axis=-1))                 # normalize each feature map before activation
+convLayer01 = Activation('relu')                       # activation
 model.add(convLayer01)
 
 # Convolution Layer 2
@@ -85,13 +85,48 @@ model.add(convLayer04)
 model.add(Flatten())                                 # Flatten final 4x4x64 output matrix into a 1024-length vector
 
 # Fully Connected Layer 5
-model.add(Dense(512))                                # 512 FCN nodes
+model.add(Dense(1000))                             # 587808 FCN nodes (ojo con esto)
 model.add(BatchNormalization())                      # normalization
 model.add(Activation('relu'))                        # activation
 
 # Fully Connected Layer 6                       
 model.add(Dropout(0.2))                              # 20% dropout of randomly selected nodes
-model.add(Dense(6))                                 # final 10 FCN nodes
+model.add(Dense(6))                                 # final 6 FCN nodes
 model.add(Activation('softmax'))                     # softmax activation
 
 #model.summary()         #CUIDADO
+
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+gen = ImageDataGenerator(rotation_range=8, width_shift_range=0.08, shear_range=0.3,
+                         height_shift_range=0.08, zoom_range=0.08)
+
+test_gen = ImageDataGenerator()
+
+train_generator = gen.flow(X_train, Y_train, batch_size=25)
+test_generator = test_gen.flow(X_test, Y_test, batch_size=25)
+
+# arreglar 60000 y 128, dependiendo de la cantidad que queramos
+model.fit_generator(train_generator, steps_per_epoch= len(X_train)//25, epochs=3, verbose=1, 
+                    validation_data=test_generator, validation_steps= len(X_test)//25)
+
+score = model.evaluate(X_test, Y_test)
+print('Test score:', score[0])
+print('Test accuracy:', score[1])
+
+
+
+
+
+
+#plt.figure()
+#plt.imshow(X_test[3].reshape(640,480), cmap='gray', interpolation='none')
+
+#visualize(convLayer01) # visualize first set of feature maps
+
+#visualize(convLayer02) # visualize second set of feature maps
+
+#visualize(convLayer03)# visualize third set of feature maps
+
+#visualize(convLayer04)# visualize fourth set of feature maps
+
