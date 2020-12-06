@@ -20,6 +20,8 @@ import reader as rd
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Conv2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, Flatten
 from keras.layers.normalization import BatchNormalization
+from keras.preprocessing import image
+
 
 largo = len(rd.Y) 
 corto = int(largo * 0.75)
@@ -93,7 +95,7 @@ model.add(Activation('relu'))                        # activation
 
 # Fully Connected Layer 6                       
 model.add(Dropout(0.2))                              # 20% dropout of randomly selected nodes
-model.add(Dense(7))                                 # final 6 FCN nodes
+model.add(Dense(7))                                 # final 7 FCN nodes
 model.add(Activation('softmax'))                     # softmax activation
 
 #model.summary()         #CUIDADO
@@ -109,7 +111,7 @@ train_generator = gen.flow(X_train, Y_train, batch_size=25)
 test_generator = test_gen.flow(X_test, Y_test, batch_size=25)
 
 # arreglar 60000 y 128, dependiendo de la cantidad que queramos
-model.fit_generator(train_generator, steps_per_epoch= len(X_train)//25, epochs=3, verbose=1, 
+model.fit_generator(train_generator, steps_per_epoch= len(X_train)//25, epochs=6, verbose=1, 
                     validation_data=test_generator, validation_steps= len(X_test)//25)
 
 score = model.evaluate(X_test, Y_test)
@@ -124,6 +126,13 @@ velocidades = {"0":[0.0,-1.0],
                "5":[-1.0,0.0],
                "6":[0.0,0.0],
                }
+
+test_image = image.load_img('/Users/tamarahan/RLDuckietown/RL/img2748.jpg',target_size=(120,160))
+test_image = image.image_to_array(test_image)
+test_image = np.expand_dims(test_image,axis=0)
+resultado = model.predict(test_image)
+
+print(resultado)
 
 #velocidades['0'] = [0.0,-1.0]
 

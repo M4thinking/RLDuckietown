@@ -11,11 +11,11 @@ import matplotlib.pyplot as plt      # MATLAB like plotting routines
 import matplotlib.image as img
 import random                        # for generating random numbers
 
-path = 'C:/Users/HP/Desktop/RLDuckietown/RL'
+path = '/Users/tamarahan/RLDuckietown/RL'
 X = []
-Y_ = np.loadtxt(os.path.join(path,'vel.txt'), delimiter = ',', max_rows = 100)
+Y_ = np.loadtxt(os.path.join(path,'vel.txt'), delimiter = ',', max_rows = 200)
 Y = []
-for i in range(100):
+for i in range(200):
     img = cv2.imread(os.path.join(path,"frames", "img{}.jpg".format(i)))
     #print('Original Dimensions : ',img.shape)
     scale_percent = 25 # percent of original size

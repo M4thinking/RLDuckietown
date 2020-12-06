@@ -17,21 +17,28 @@ import os
 import matplotlib.pyplot as plt      # MATLAB like plotting routines
 import matplotlib.image as img
 import random                        # for generating random numbers
+from keras.preprocessing import image
+import neural
 
 #Definimos nuestos envirioment
 
 def mov_duckiebot(key):
     # La acción de Duckiebot consiste en dos valores:
     # velocidad lineal y velocidad de giro
-    actions = {ord('w'): np.array([1.0, 0.0]),
-               ord('s'): np.array([-1.0, 0.0]),
-               ord('a'): np.array([0.0, 1.0]),
-               ord('d'): np.array([0.0, -1.0]),
-               ord('q'): np.array([0.3, 1.0]),
-               ord('e'): np.array([0.3, -1.0])
+    actions = {ord('4'): np.array([1.0, 0.0]),
+               ord('5'): np.array([-1.0, 0.0]),
+               ord('1'): np.array([0.0, 1.0]),
+               ord('0'): np.array([0.0, -1.0]),
+               ord('3'): np.array([0.3, 1.0]),
+               ord('2'): np.array([0.3, -1.0]),
+               ord('6'): np.array([0.0, 0.0])
                }
 
     return actions.get(key, np.array([0.0, 0.0]))
+
+
+
+
 
 
 if __name__ == '__main__':
@@ -66,8 +73,7 @@ if __name__ == '__main__':
     env.reset()
 
 
-    i = 0
-    archivo = open("vel.txt", 'w')
+    key = '6'
     while True:
 
         # Captura la tecla que está siendo apretada y almacena su valor en key
@@ -80,11 +86,9 @@ if __name__ == '__main__':
         # Se ejecuta la acción definida anteriormente y se retorna la observación (obs),
         # la evaluación (reward), etc
         obs, reward, done, info = env.step(action)
-        archivo.write(str(action[0])+","+str(action[1]) +'\n')
         # obs consiste en un imagen RGB de 640 x 480 x 3
-        path = '/Users/tamarahan/RLDuckietown/RL/frames'
-        cv2.imwrite(os.path.join(path,"img{}.jpg".format(i)), cv2.cvtColor(obs, cv2.COLOR_RGB2BGR))
-        i+=1
+        obs_ = np.expand_dims(obs,axis=0)
+        key = model.predict(obs_)
         # done significa que el Duckiebot chocó con un objeto o se salió del camino
         if done:
             print('done!')
@@ -94,6 +98,6 @@ if __name__ == '__main__':
  
         # Se muestra en una ventana llamada "patos" la observación del simulador
         cv2.imshow("patos", cv2.cvtColor(obs, cv2.COLOR_RGB2BGR))
-    archivo.close()
+        
 # Se cierra el environment y termina el programa
 env.close()
