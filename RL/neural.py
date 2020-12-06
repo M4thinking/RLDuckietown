@@ -13,6 +13,7 @@ import random                        # for generating random numbers
 
 from keras.models import Sequential  # Model type to be used
 
+import tensorflow as tf
 from keras.layers.core import Dense, Dropout, Activation # Types of layers to be used in our model
 from keras.utils import np_utils                         # NumPy related tools	
 import reader as rd
@@ -38,21 +39,22 @@ Y_test = rd.Y[corto:]
 #X_train = X_train.reshape(largo, 640, 480, 3) #add an additional dimension to represent the single-channel
 #X_test = X_test.reshape(corto, 640, 480, 3)
 
-#X_train = X_train.astype('float32')         # change integers to 32-bit floating point numbers
-#X_test = X_test.astype('float32')
+X_train = X_train.astype('float32')         # change integers to 32-bit floating point numbers
+X_test = X_test.astype('float32')
 
 X_train = X_train/255                              # normalize each value for each pixel for the entire vector for each input
 X_test = X_test/255
 
-#print("Training matrix shape", X_train.shape)
-#print("Testing matrix shape", X_test.shape)
+print("Training matrix shape", X_train.shape)
+print("Testing matrix shape", X_test.shape)
 
-nb_classes = 6 # numero de teclas
+nb_classes = 7 # numero de teclas
 
 Y_train = np_utils.to_categorical(Y_train, nb_classes)
 Y_test = np_utils.to_categorical(Y_test, nb_classes)
 
-
+print("Testing matrix shape", Y_train.shape)
+print("Testing matrix shape", Y_test.shape)
 
 #SANDWICH NEURONAL
 model = Sequential()                                 # Linear stacking of layers
@@ -91,7 +93,7 @@ model.add(Activation('relu'))                        # activation
 
 # Fully Connected Layer 6                       
 model.add(Dropout(0.2))                              # 20% dropout of randomly selected nodes
-model.add(Dense(6))                                 # final 6 FCN nodes
+model.add(Dense(7))                                 # final 6 FCN nodes
 model.add(Activation('softmax'))                     # softmax activation
 
 #model.summary()         #CUIDADO
@@ -114,10 +116,16 @@ score = model.evaluate(X_test, Y_test)
 print('Test score:', score[0])
 print('Test accuracy:', score[1])
 
+velocidades = {"0":[0.0,-1.0],
+               "1":[0.0,1.0],
+               "2":[0.3,-1.0],
+               "3":[0.3,1.0],
+               "4":[1.0,0.0],
+               "5":[-1.0,0.0],
+               "6":[0.0,0.0],
+               }
 
-
-
-
+#velocidades['0'] = [0.0,-1.0]
 
 #plt.figure()
 #plt.imshow(X_test[3].reshape(640,480), cmap='gray', interpolation='none')
