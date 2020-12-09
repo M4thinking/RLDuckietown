@@ -18,27 +18,26 @@ import matplotlib.pyplot as plt      # MATLAB like plotting routines
 import matplotlib.image as img
 import random                        # for generating random numbers
 from keras.preprocessing import image
-import neural
+#import neural
+import tensorflow as tf
+
+model = tf.keras.models.load_model("RL.h5")
 
 #Definimos nuestos envirioment
 
 def mov_duckiebot(key):
     # La acción de Duckiebot consiste en dos valores:
     # velocidad lineal y velocidad de giro
-    actions = {ord('4'): np.array([1.0, 0.0]),
-               ord('5'): np.array([-1.0, 0.0]),
-               ord('1'): np.array([0.0, 1.0]),
-               ord('0'): np.array([0.0, -1.0]),
-               ord('3'): np.array([0.3, 1.0]),
-               ord('2'): np.array([0.3, -1.0]),
-               ord('6'): np.array([0.0, 0.0])
+    actions = {4: np.array([1.0, 0.0]),
+               5: np.array([-1.0, 0.0]),
+               1: np.array([0.0, 1.0]),
+               0: np.array([0.0, -1.0]),
+               3: np.array([0.3, 1.0]),
+               2: np.array([0.3, -1.0]),
+               6: np.array([0.0, 0.0])
                }
 
     return actions.get(key, np.array([0.0, 0.0]))
-
-
-
-
 
 
 if __name__ == '__main__':
@@ -73,7 +72,8 @@ if __name__ == '__main__':
     env.reset()
 
 
-    key = '6'
+
+    _key = '6'
     while True:
 
         # Captura la tecla que está siendo apretada y almacena su valor en key
@@ -81,14 +81,19 @@ if __name__ == '__main__':
         # Si la tecla es Esc, se sale del loop y termina el programa
         if key == 27:
             break
-        
-        action = mov_duckiebot(key)
+        print("0",_key)
+        action = mov_duckiebot(_key)
         # Se ejecuta la acción definida anteriormente y se retorna la observación (obs),
         # la evaluación (reward), etc
         obs, reward, done, info = env.step(action)
         # obs consiste en un imagen RGB de 640 x 480 x 3
-        obs_ = np.expand_dims(obs,axis=0)
-        key = model.predict(obs_)
+        dim = (160, 120)
+        resized = cv2.resize(obs, dim, interpolation = cv2.INTER_AREA)
+        obs_ = np.expand_dims(resized,axis=0)
+        _key = model.predict(obs_)
+        print("1",_key)
+        _key = np.argmax(_key[0])
+        print("2",_key)
         # done significa que el Duckiebot chocó con un objeto o se salió del camino
         if done:
             print('done!')

@@ -77,15 +77,23 @@ if __name__ == '__main__':
             break
         
         action = mov_duckiebot(key)
-        # Se ejecuta la acción definida anteriormente y se retorna la observación (obs),
-        # la evaluación (reward), etc
-        obs, reward, done, info = env.step(action)
-        archivo.write(str(action[0])+","+str(action[1]) +'\n')
-        # obs consiste en un imagen RGB de 640 x 480 x 3
-        path = '/Users/tamarahan/RLDuckietown/RL/frames'
-        cv2.imwrite(os.path.join(path,"img{}.jpg".format(i)), cv2.cvtColor(obs, cv2.COLOR_RGB2BGR))
-        i+=1
-        # done significa que el Duckiebot chocó con un objeto o se salió del camino
+        comp = (action[0],action[1])
+        if comp == (1.0, 0.0) or comp == (0.0, 1.0) or comp == (0.0, -1.0) or comp == (0.3, 1.0) or comp == (0.3, -1.0):
+            
+            # Se ejecuta la acción definida anteriormente y se retorna la observación (obs),
+            # la evaluación (reward), etc
+            obs, reward, done, info = env.step(action)
+            archivo.write(str(action[0])+","+str(action[1]) +'\n')
+            # obs consiste en un imagen RGB de 640 x 480 x 3
+            path = '/Users/Max/Desktop/RLDuckietown/RL/frames'
+            cv2.imwrite(os.path.join(path,"img{}.jpg".format(i)), cv2.cvtColor(obs, cv2.COLOR_RGB2BGR))
+            i+=1
+            # done significa que el Duckiebot chocó con un objeto o se salió del camino
+        else:
+            # Se ejecuta la acción definida anteriormente y se retorna la observación (obs),
+            # la evaluación (reward), etc
+            obs, reward, done, info = env.step(action)
+
         if done:
             print('done!')
             
