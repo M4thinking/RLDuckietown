@@ -50,7 +50,7 @@ X_test = X_test/255
 print("Training matrix shape", X_train.shape)
 print("Testing matrix shape", X_test.shape)
 
-nb_classes = 5 # numero de teclas
+nb_classes = 3 # numero de teclas
 
 Y_train = np_utils.to_categorical(Y_train, nb_classes)
 Y_test = np_utils.to_categorical(Y_test, nb_classes)
@@ -95,7 +95,7 @@ model.add(Activation('relu'))                        # activation
 
 # Fully Connected Layer 6                       
 model.add(Dropout(0.2))                              # 20% dropout of randomly selected nodes
-model.add(Dense(5))                                 # final 7 FCN nodes
+model.add(Dense(3))                                 # final 3 FCN nodes (3 movimientos)
 model.add(Activation('softmax'))                     # softmax activation
 
 #model.summary()         #CUIDADO

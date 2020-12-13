@@ -78,7 +78,7 @@ if __name__ == '__main__':
         
         action = mov_duckiebot(key)
         comp = (action[0],action[1])
-        if comp == (1.0, 0.0) or comp == (0.0, 1.0) or comp == (0.0, -1.0) or comp == (0.3, 1.0) or comp == (0.3, -1.0):
+        if comp == (1.0, 0.0) or comp == (0.3, 1.0) or comp == (0.3, -1.0):
             
             # Se ejecuta la acción definida anteriormente y se retorna la observación (obs),
             # la evaluación (reward), etc

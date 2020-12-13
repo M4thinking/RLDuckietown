@@ -21,7 +21,7 @@ from keras.preprocessing import image
 #import neural
 import tensorflow as tf
 
-model = tf.keras.models.load_model("RL.h5")
+model = tf.keras.models.load_model("my_model.h5")
 
 #Definimos nuestos envirioment
 

@@ -25,11 +25,7 @@ for i in range(200):
     resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
     X.append(resized)
     comp = (Y_[i][0],Y_[i][1])
-    if comp == (0.0,-1.0):
-        Y_[i] = [0]
-    elif comp == (0.0,1.0):
-        Y_[i] = [1]
-    elif comp == (0.3,-1.0):
+    if comp == (0.3,-1.0):
         Y_[i] = [2]
     elif comp == (0.3,1.0):
         Y_[i] = [3]
