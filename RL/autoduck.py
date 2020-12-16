@@ -28,13 +28,13 @@ model = tf.keras.models.load_model("my_model.h5")
 def mov_duckiebot(key):
     # La acción de Duckiebot consiste en dos valores:
     # velocidad lineal y velocidad de giro
-    actions = {4: np.array([1.0, 0.0]),
-               5: np.array([-1.0, 0.0]),
-               1: np.array([0.0, 1.0]),
-               0: np.array([0.0, -1.0]),
-               3: np.array([0.3, 1.0]),
-               2: np.array([0.3, -1.0]),
-               6: np.array([0.0, 0.0])
+    actions = {0:np.array([1.0,0.0]),
+               1:np.array([0.3,1.0]),
+               2:np.array([0.3,-1.0]),
+               3:np.array([0.0,-1.0]),
+               4:np.array([0.0,1.0]),
+               5:np.array([-1.0,0.0]),
+               6:np.array([0.0,0.0]),
                }
 
     return actions.get(key, np.array([0.0, 0.0]))

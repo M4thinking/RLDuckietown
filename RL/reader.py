@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt      # MATLAB like plotting routines
 import matplotlib.image as img
 import random                        # for generating random numbers
 
-path = 'Users\Max\Desktop\RLDuckietown\RL'
+path = 'Users\tamarahan\RLDuckietown\RL'
 X = []
 Y_ = np.loadtxt(os.path.join(path,'vel.txt'), delimiter = ',', max_rows = 200)
 Y = []
@@ -25,12 +25,12 @@ for i in range(200):
     resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
     X.append(resized)
     comp = (Y_[i][0],Y_[i][1])
-    if comp == (0.3,-1.0):
-        Y_[i] = [2]
+    if comp == (1.0,0.0):
+        Y_[i] = [0]
     elif comp == (0.3,1.0):
-        Y_[i] = [3]
-    elif comp == (1.0,0.0):
-        Y_[i] = [4]
+        Y_[i] = [1]
+    elif comp == (0.3,-1.0):
+        Y_[i] = [2]
 
 
         
@@ -40,16 +40,16 @@ for i in range(200):
 X = np.array(X)
 Y = np.array(Y)
 
-velocidades = {"0":[0.0,-1.0],
-               "1":[0.0,1.0],
+velocidades = {"0":[1.0,0.0],
+               "1":[0.3,1.0],
                "2":[0.3,-1.0],
-               "3":[0.3,1.0],
-               "4":[1.0,0.0],
+               "3":[0.0,-1.0],
+               "4":[0.0,1.0],
                "5":[-1.0,0.0],
                "6":[0.0,0.0],
                }
 
-#velocidades['0'] = [0.0,-1.0]
+
 
 
 #print(X.shape, Y.shape)

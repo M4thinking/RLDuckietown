@@ -118,26 +118,58 @@ score = model.evaluate(X_test, Y_test)
 print('Test score:', score[0])
 print('Test accuracy:', score[1])
 
-velocidades = {"0":[0.0,-1.0],
-               "1":[0.0,1.0],
+velocidades = {"0":[1.0,0.0],
+               "1":[0.3,1.0],
                "2":[0.3,-1.0],
-               "3":[0.3,1.0],
-               "4":[1.0,0.0],
+               "3":[0.0,-1.0],
+               "4":[0.0,1.0],
                "5":[-1.0,0.0],
                "6":[0.0,0.0],
                }
 
-test_image = image.load_img('/Users/tamarahan/RLDuckietown/RL/img2748.jpg',target_size=(120,160))
-test_image = image.image_to_array(test_image)
+from PIL import Image
+
+#test_image = image.load_img(path + '/frames/img190.jpg',target_size=(120,160))
+#test_image = image.img_to_array(test_image)
+test_image = X_test[25]
 test_image = np.expand_dims(test_image,axis=0)
-resultado = model.predict(test_image)
+prediccion = model.predict(test_image)
+maxima_probabilidad = max(prediccion[0])
+for i in range(len(prediccion[0])):
+  if maxima_probabilidad == prediccion[0][i]:
+    print(velocidades["{}".format(i)])
+    break
+print(prediccion[0])
 
-print(resultado)
 
-#velocidades['0'] = [0.0,-1.0]
+from keras import backend as K
 
-#plt.figure()
-#plt.imshow(X_test[3].reshape(640,480), cmap='gray', interpolation='none')
+def visualize(layer):
+    inputs = [K.learning_phase()] + model.inputs
+
+    _convout1_f = K.function(inputs, [layer.output])
+
+    def convout1_f(X):
+        # The [0] is to disable the training phase flag
+        return _convout1_f([0] + [X])
+
+    convolutions = convout1_f(img)
+    convolutions = np.squeeze(convolutions)
+
+    print ('Shape of conv:', convolutions.shape)
+
+    m = convolutions.shape[2]
+    n = int(np.ceil(np.sqrt(m)))
+
+    # Visualization of each filter of the layer
+    fig = plt.figure(figsize=(15,12))
+    for i in range(m):
+        ax = fig.add_subplot(n,n,i+1)
+        ax.imshow(convolutions[:,:,i], cmap='gray')
+
+plt.figure()
+plt.imshow(X_test[25].reshape(120,160,3), cmap='gray', interpolation='none')
+
 
 #visualize(convLayer01) # visualize first set of feature maps
 

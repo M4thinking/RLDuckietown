@@ -39,7 +39,7 @@ if __name__ == '__main__':
     # Se leen los argumentos de entrada
     parser = argparse.ArgumentParser()
     parser.add_argument('--env-name', default="Duckietown-udem1-v1")
-    parser.add_argument('--map-name', default='udem1')
+    parser.add_argument('--map-name', default='zigzag_dists')
     parser.add_argument('--distortion', default=False, action='store_true')
     parser.add_argument('--draw-curve', action='store_true', help='draw the lane following curve')
     parser.add_argument('--draw-bbox', action='store_true', help='draw collision detection bounding boxes')
@@ -85,7 +85,7 @@ if __name__ == '__main__':
             obs, reward, done, info = env.step(action)
             archivo.write(str(action[0])+","+str(action[1]) +'\n')
             # obs consiste en un imagen RGB de 640 x 480 x 3
-            path = '/Users/Max/Desktop/RLDuckietown/RL/frames'
+            path = '/Users/tamarahan/RLDuckietown/RL/frames'
             cv2.imwrite(os.path.join(path,"img{}.jpg".format(i)), cv2.cvtColor(obs, cv2.COLOR_RGB2BGR))
             i+=1
             # done significa que el Duckiebot chocó con un objeto o se salió del camino
