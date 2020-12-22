@@ -24,7 +24,7 @@ from keras.preprocessing import image
 
 
 largo = len(rd.Y) 
-corto = int(largo * 0.75)
+corto = int(largo * 1)
 
 
 X_train = rd.X[:corto]
@@ -50,7 +50,7 @@ X_test = X_test/255
 print("Training matrix shape", X_train.shape)
 print("Testing matrix shape", X_test.shape)
 
-nb_classes = 3 # numero de teclas
+nb_classes = 4 # numero de teclas
 
 Y_train = np_utils.to_categorical(Y_train, nb_classes)
 Y_test = np_utils.to_categorical(Y_test, nb_classes)
@@ -95,7 +95,7 @@ model.add(Activation('relu'))                        # activation
 
 # Fully Connected Layer 6                       
 model.add(Dropout(0.2))                              # 20% dropout of randomly selected nodes
-model.add(Dense(3))                                 # final 3 FCN nodes (3 movimientos)
+model.add(Dense(4))                                 # final 3 FCN nodes (3 movimientos)
 model.add(Activation('softmax'))                     # softmax activation
 
 #model.summary()         #CUIDADO
@@ -111,13 +111,13 @@ train_generator = gen.flow(X_train, Y_train, batch_size=25)
 test_generator = test_gen.flow(X_test, Y_test, batch_size=25)
 
 # arreglar 60000 y 128, dependiendo de la cantidad que queramos
-model.fit_generator(train_generator, steps_per_epoch= len(X_train)//25, epochs=6, verbose=1, 
-                    validation_data=test_generator, validation_steps= len(X_test)//25)
+model.fit(X_train,Y_train, epochs=4, verbose=1, batch_size=20,
+                    validation_split=0.75,validation_data=None)
 
-score = model.evaluate(X_test, Y_test)
-print('Test score:', score[0])
-print('Test accuracy:', score[1])
-
+#score = model.evaluate(X_test, Y_test)
+#print('Test score:', score[0])
+#print('Test accuracy:', score[1])
+model.save("my_model.h5")
 velocidades = {"0":[1.0,0.0],
                "1":[0.3,1.0],
                "2":[0.3,-1.0],
