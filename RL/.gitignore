@@ -1,3 +1,4 @@
-frames
-frames/
-vel.txt
+*.h5
+*.pyc
+*__pycache__
+*vel.txt

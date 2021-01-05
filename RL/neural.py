@@ -20,162 +20,104 @@ import reader as rd
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Conv2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, Flatten
 from keras.layers.normalization import BatchNormalization
-from keras.preprocessing import image
 
 
-largo = len(rd.Y) 
-corto = int(largo * 1)
+#Se descarga conjunto de entrenamiento
 
+X_train = rd.X  
+Y_train = rd.Y  
 
-X_train = rd.X[:corto]
-X_test = rd.X[corto:]
-Y_train = rd.Y[:corto]
-Y_test = rd.Y[corto:]
+X_train = X_train.astype('float32')                # cambiar enteros a float de 32 bits
+X_train = X_train/255                              # normalizar cada valor de cada píxel para todo el vector de cada entrada
 
-
-#print("X_train shape", X_train.shape)
-#print("y_train shape", Y_train.shape)
-#print("X_test shape", X_test.shape)
-#print("y_test shape", Y_test.shape)
-
-#X_train = X_train.reshape(largo, 640, 480, 3) #add an additional dimension to represent the single-channel
-#X_test = X_test.reshape(corto, 640, 480, 3)
-
-X_train = X_train.astype('float32')         # change integers to 32-bit floating point numbers
-X_test = X_test.astype('float32')
-
-X_train = X_train/255                              # normalize each value for each pixel for the entire vector for each input
-X_test = X_test/255
-
-print("Training matrix shape", X_train.shape)
-print("Testing matrix shape", X_test.shape)
-
-nb_classes = 4 # numero de teclas
+nb_classes = 3 # numero de teclas Q-W-E
 
 Y_train = np_utils.to_categorical(Y_train, nb_classes)
-Y_test = np_utils.to_categorical(Y_test, nb_classes)
 
-print("Testing matrix shape", Y_train.shape)
-print("Testing matrix shape", Y_test.shape)
+print("Training X matrix shape", X_train.shape)
+print("Training Y matrix shape", Y_train.shape)
 
-#SANDWICH NEURONAL
-model = Sequential()                                 # Linear stacking of layers
+#Modelo de capas de redes neuronales
+model = Sequential()                                   # Apilado lineal de capas
 
-# Convolution Layer 1
-model.add(Conv2D(32, (3, 3), input_shape=(120,160,3))) # 32 different 3x3 kernels -- so 32 feature maps
-model.add(BatchNormalization(axis=-1))                 # normalize each feature map before activation
-convLayer01 = Activation('relu')                       # activation
+# Capa de convolución 1
+model.add(Conv2D(32, (3, 3), input_shape=(120,160,3))) # 32 kernels de 3x3 diferentes --> 32 feature map
+model.add(BatchNormalization(axis=-1))                 # normalizar cada feature map antes de la activación
+convLayer01 = Activation('relu')                       # activación
 model.add(convLayer01)
 
-# Convolution Layer 2
-model.add(Conv2D(32, (3, 3)))                        # 32 different 3x3 kernels -- so 32 feature maps
-model.add(BatchNormalization(axis=-1))               # normalize each feature map before activation
-model.add(Activation('relu'))                        # activation
-convLayer02 = MaxPooling2D(pool_size=(2,2))          # Pool the max values over a 2x2 kernel
+# Capa de convolución 2
+model.add(Conv2D(32, (3, 3)))                        # 32 kernels de 3x3 diferentes --> 32 mapas nuevos
+model.add(BatchNormalization(axis=-1))               # normalizar cada feature map antes de la activación
+model.add(Activation('relu'))                        # activacion
+convLayer02 = MaxPooling2D(pool_size=(2,2))          # agrupa los valores máximos en un kernel 2x2
 model.add(convLayer02)
 
-# Convolution Layer 3
-model.add(Conv2D(64,(3, 3)))                         # 64 different 3x3 kernels -- so 64 feature maps
-model.add(BatchNormalization(axis=-1))               # normalize each feature map before activation
-convLayer03 = Activation('relu')                     # activation
+# Capa de convolución 3
+model.add(Conv2D(64,(3, 3)))                         # 64 kernels de 3x3 diferentes --> 64 mapas nuevos
+model.add(BatchNormalization(axis=-1))               # normalizar cada feature map antes de la activación
+convLayer03 = Activation('relu')                     # activación
 model.add(convLayer03)
 
-# Convolution Layer 4
-model.add(Conv2D(64, (3, 3)))                        # 64 different 3x3 kernels -- so 64 feature maps
-model.add(BatchNormalization(axis=-1))               # normalize each feature map before activation
-model.add(Activation('relu'))                        # activation
-convLayer04 = MaxPooling2D(pool_size=(2,2))          # Pool the max values over a 2x2 kernel
+# Capa de convolución 4
+model.add(Conv2D(64, (3, 3)))                        # 64 kernels de 3x3 diferentes --> 64 mapas nuevos
+model.add(BatchNormalization(axis=-1))               # normalizar cada feature map antes de la activación
+model.add(Activation('relu'))                        # Funcion de activacion
+convLayer04 = MaxPooling2D(pool_size=(2,2))          # agrupa los valores máximos en un kernel 2x2
 model.add(convLayer04)
-model.add(Flatten())                                 # Flatten final 4x4x64 output matrix into a 1024-length vector
+model.add(Flatten())                                 # aplanado final : 4x4x64 matriz de salida --> vector de 1024-largo
 
-# Fully Connected Layer 5
-model.add(Dense(1000))                             # 587808 FCN nodes (ojo con esto)
-model.add(BatchNormalization())                      # normalization
-model.add(Activation('relu'))                        # activation
+# Capa completamente conectada 5
+model.add(Dense(1000))                               # 1000 FCN nodes (ojo con esto)
+model.add(BatchNormalization())                      # normalización
+model.add(Activation('relu'))                        # activación
 
-# Fully Connected Layer 6                       
-model.add(Dropout(0.2))                              # 20% dropout of randomly selected nodes
-model.add(Dense(4))                                 # final 3 FCN nodes (3 movimientos)
-model.add(Activation('softmax'))                     # softmax activation
+# Capa completamente conectada 6                       
+model.add(Dropout(0.2))                              # 20% déficit de nodos seleccionados al azar
+model.add(Dense(3))                                  # 3 movimientos posibles finales
+model.add(Activation('softmax'))                     # activacion softmax 
 
-#model.summary()         #CUIDADO
+#model.summary()                                     #CUIDADO, para ver el resumen del modelo
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+#Se entrega dirección donde se guarda el modelo (modificar)
+path = '/Users/HP/Desktop/RLDuckietown/RL'
+# Se corre el modelo con el conjunto de entrenamiento
+#En este caso en particular no se uso un conjunto de validación exterior
+model.fit(X_train,Y_train, epochs=7 , verbose=1, batch_size=20, validation_split=0.20, validation_data=None)
+model.save(os.path.join(path,"models", "nombre_modelo.h5"))
+print('Modelo listo con nombre: ' + 'nombre_modelo' )
 
-gen = ImageDataGenerator(rotation_range=8, width_shift_range=0.08, shear_range=0.3,
-                         height_shift_range=0.08, zoom_range=0.08)
+#Si se tiene un conjunto de entrenamiento exterior, es posible comparar el desempeño del modelo
 
-test_gen = ImageDataGenerator()
+#X_test = X_exterior
+#Y_test = Y_exterior
 
-train_generator = gen.flow(X_train, Y_train, batch_size=25)
-test_generator = test_gen.flow(X_test, Y_test, batch_size=25)
+#n_datos_test = len(X_test)
 
-# arreglar 60000 y 128, dependiendo de la cantidad que queramos
-model.fit(X_train,Y_train, epochs=4, verbose=1, batch_size=20,
-                    validation_split=0.75,validation_data=None)
+#print("X_test shape", X_test.shape)
+#print("Y_test shape", Y_test.shape)
+
+#X_test = X_test.reshape(n_datos_test, 640, 480, 3)
+
+#X_test = np.array(X_test).astype('float32')
+
+#X_test = X_test/255
+
+#Y_test = np_utils.to_categorical(Y_test, nb_classes)
+
+#print("Testing matrix shape", X_test.shape)
+#print("Testing Y matrix shape", Y_test.shape)
 
 #score = model.evaluate(X_test, Y_test)
 #print('Test score:', score[0])
 #print('Test accuracy:', score[1])
-model.save("my_model.h5")
-velocidades = {"0":[1.0,0.0],
-               "1":[0.3,1.0],
-               "2":[0.3,-1.0],
+
+velocidades = {"0":[1.0,0.0],  #Adelante W
+               "1":[0.3,1.0],  #Derecha/Adelante E
+               "2":[0.3,-1.0], #Izquierda/Adelante Q
                "3":[0.0,-1.0],
                "4":[0.0,1.0],
                "5":[-1.0,0.0],
                "6":[0.0,0.0],
                }
-
-from PIL import Image
-
-#test_image = image.load_img(path + '/frames/img190.jpg',target_size=(120,160))
-#test_image = image.img_to_array(test_image)
-test_image = X_test[25]
-test_image = np.expand_dims(test_image,axis=0)
-prediccion = model.predict(test_image)
-maxima_probabilidad = max(prediccion[0])
-for i in range(len(prediccion[0])):
-  if maxima_probabilidad == prediccion[0][i]:
-    print(velocidades["{}".format(i)])
-    break
-print(prediccion[0])
-
-
-from keras import backend as K
-
-def visualize(layer):
-    inputs = [K.learning_phase()] + model.inputs
-
-    _convout1_f = K.function(inputs, [layer.output])
-
-    def convout1_f(X):
-        # The [0] is to disable the training phase flag
-        return _convout1_f([0] + [X])
-
-    convolutions = convout1_f(img)
-    convolutions = np.squeeze(convolutions)
-
-    print ('Shape of conv:', convolutions.shape)
-
-    m = convolutions.shape[2]
-    n = int(np.ceil(np.sqrt(m)))
-
-    # Visualization of each filter of the layer
-    fig = plt.figure(figsize=(15,12))
-    for i in range(m):
-        ax = fig.add_subplot(n,n,i+1)
-        ax.imshow(convolutions[:,:,i], cmap='gray')
-
-plt.figure()
-plt.imshow(X_test[25].reshape(120,160,3), cmap='gray', interpolation='none')
-
-
-#visualize(convLayer01) # visualize first set of feature maps
-
-#visualize(convLayer02) # visualize second set of feature maps
-
-#visualize(convLayer03)# visualize third set of feature maps
-
-#visualize(convLayer04)# visualize fourth set of feature maps
-

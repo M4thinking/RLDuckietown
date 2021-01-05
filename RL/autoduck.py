@@ -1,7 +1,7 @@
 #!/usr/bin/env pyth
 """
-Este programa permite mover
-.
+Este programa permite mover autónomamente del Duckiebot.
+
 """
 #Las necesesarias para ejecutar el programa
 import sys
@@ -12,16 +12,14 @@ from gym_duckietown.envs import DuckietownEnv
 import numpy as np
 import cv2
 import os
-
-#La red/Rl            
-import matplotlib.pyplot as plt      # MATLAB like plotting routines
-import matplotlib.image as img
-import random                        # for generating random numbers
-from keras.preprocessing import image
-#import neural
 import tensorflow as tf
 
-model = tf.keras.models.load_model("my_model.h5")
+
+#Se entrega dirección donde se guarda el modelo (modificar)
+path = '/Users/HP/Desktop/RLDuckietown/RL'
+#Se tiene modelo de prueba por defecto en carpeta models
+#Se ejecuta el modelo de red neuronal
+model = tf.keras.models.load_model(os.path.join(path,"models", "modelo1.h5"))
 
 #Definimos nuestos envirioment
 
@@ -45,7 +43,7 @@ if __name__ == '__main__':
     # Se leen los argumentos de entrada
     parser = argparse.ArgumentParser()
     parser.add_argument('--env-name', default="Duckietown-udem1-v1")
-    parser.add_argument('--map-name', default='zigzag_dists')
+    parser.add_argument('--map-name', default='udem1')
     parser.add_argument('--distortion', default=False, action='store_true')
     parser.add_argument('--draw-curve', action='store_true', help='draw the lane following curve')
     parser.add_argument('--draw-bbox', action='store_true', help='draw collision detection bounding boxes')
@@ -72,7 +70,7 @@ if __name__ == '__main__':
     env.reset()
 
 
-
+    #Se crea una llave auxiliar que permite partir quieto
     _key = '6'
     while True:
 
@@ -81,19 +79,19 @@ if __name__ == '__main__':
         # Si la tecla es Esc, se sale del loop y termina el programa
         if key == 27:
             break
-        print("0",_key)
+        # Se ejecuta la acción definida anteriormente  
         action = mov_duckiebot(_key)
-        # Se ejecuta la acción definida anteriormente y se retorna la observación (obs),
-        # la evaluación (reward), etc
+        # Se retorna la observación (obs), la evaluación (reward), etc
         obs, reward, done, info = env.step(action)
         # obs consiste en un imagen RGB de 640 x 480 x 3
-        dim = (160, 120)
+        dim = (160, 120)dasdasds4rrr
+        # Se estandariza a imagen a las dimensiones que acepta el modelo
         resized = cv2.resize(obs, dim, interpolation = cv2.INTER_AREA)
         obs_ = np.expand_dims(resized,axis=0)
+        #Se ejecuta la predicción
         _key = model.predict(obs_)
-        print("1",_key)
         _key = np.argmax(_key[0])
-        print("2",_key)
+        print(_key)
         # done significa que el Duckiebot chocó con un objeto o se salió del camino
         if done:
             print('done!')
