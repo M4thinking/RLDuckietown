@@ -84,7 +84,7 @@ if __name__ == '__main__':
         # Se retorna la observación (obs), la evaluación (reward), etc
         obs, reward, done, info = env.step(action)
         # obs consiste en un imagen RGB de 640 x 480 x 3
-        dim = (160, 120)dasdasds4rrr
+        dim = (160, 120)
         # Se estandariza a imagen a las dimensiones que acepta el modelo
         resized = cv2.resize(obs, dim, interpolation = cv2.INTER_AREA)
         obs_ = np.expand_dims(resized,axis=0)
