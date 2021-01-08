@@ -11,7 +11,7 @@ Reinforcement Learning para conducción autónoma-Duckietown.
 
 - autoduck.py : Este programa permite mover autónomamente el Duckiebot.
 
-Recomendaciones:
+**Recomendaciones:**
 
 Dentro del README.md de la caperta models, se encuentra un link al modelo de prueba generado durante la confección de este proyecto. Una vez descargado el modelo de prueba, dejar en carpeta models.
 
